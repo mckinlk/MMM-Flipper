@@ -48,6 +48,7 @@ Module.register("MMM-Flipper", {
 
     // Load the core flipper logic
     loadFlipperCore: function() {
+        Log.info("MMM-Flipper: Loading flipper-core.js");
         var script = document.createElement("script");
         script.src = this.file("flipper-core.js");
         document.head.appendChild(script);
@@ -56,12 +57,14 @@ Module.register("MMM-Flipper", {
         var self = this;
         var checkCore = setInterval(function() {
             if (typeof FlipperCore !== 'undefined') {
+                Log.info("MMM-Flipper: FlipperCore loaded successfully");
                 self.FlipperCore = FlipperCore;
                 clearInterval(checkCore);
 
                 // Initialize task states now that FlipperCore is available
                 try {
                     self.taskStates = self.FlipperCore.initializeTaskStates(self.config.tasks, {});
+                    Log.info("MMM-Flipper: Task states initialized successfully");
                 } catch (e) {
                     Log.error("Error initializing task states:", e);
                     self.taskStates = {};
@@ -69,6 +72,9 @@ Module.register("MMM-Flipper", {
 
                 // Request saved states from node_helper (will merge when received)
                 self.sendSocketNotification("GET_TASK_STATES", {});
+                
+                // Update the DOM now that FlipperCore is loaded and states are initialized
+                self.updateDom(self.config.animationSpeed);
             }
         }, 100);
     },
