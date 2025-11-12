@@ -153,6 +153,8 @@ Module.register("MMM-Flipper", {
     },
 
     getScripts: function() {
-        return ["flipper-core.js"];
+        // Note: flipper-core.js is loaded manually in loadFlipperCore()
+        // to ensure proper timing and avoid duplicate declarations
+        return [];
     }
 });
