@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MMM-Flipper Tester</title>
+    
+    <!-- Link to the actual module CSS -->
+    <link rel="stylesheet" href="MMM-Flipper.css">
+    
+    <style>
+        /* Base styles for tester page only */
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            color: #fff;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 1.1em;
+        }
+
+        /* Test controls */
+        .controls {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+
+        .controls button {
+            background: #f44336;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+
+        .controls button:hover {
+            background: #d32f2f;
+        }
+
+        /* Info panel */
+        .info {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+
+        .info h3 {
+            margin-top: 0;
+            color: #fff;
+        }
+
+        /* Animation for current person (added to test page) */
+        .flipper-current-person {
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔄 MMM-Flipper Tester</h1>
+        <p class="subtitle">Test your task rotation module</p>
+
+        <div class="controls">
+            <button onclick="resetAll()">🔄 Reset All Tasks</button>
+            <button onclick="saveToLocalStorage()">💾 Save to Browser</button>
+            <button onclick="loadFromLocalStorage()">📂 Load from Browser</button>
+        </div>
+
+        <div id="flipper-module" class="flipper-container">
+            <!-- Tasks will be rendered here -->
+        </div>
+
+        <div class="info">
+            <h3>ℹ️ Instructions</h3>
+            <p><strong>Click on a person's name</strong> to rotate to the next person for that task.</p>
+            <p><strong>Last assignment info</strong> shows who did it last and when.</p>
+            <p><strong>Save to Browser</strong> stores the current state in your browser's local storage.</p>
+            <p><strong>Load from Browser</strong> restores the last saved state.</p>
+            <p><strong>Reset All Tasks</strong> clears all assignments and starts fresh.</p>
+        </div>
+    </div>
+
+    <!-- Load the core flipper logic -->
+    <script src="flipper-core.js"></script>
+    
+    <script>
+        // Configuration (mimics MagicMirror config)
+        const config = {
+            tasks: [
+                {
+                    name: "Dishes",
+                    people: ["Alice", "Bob", "Charlie"],
+                    colors: ["#FF6B6B", "#4ECDC4", "#45B7D1"]  // Red, Teal, Blue
+                },
+                {
+                    name: "Litter Box",
+                    people: ["Alice", "Bob"],
+                    colors: ["#FF6B6B", "#4ECDC4"]  // Red, Teal
+                },
+                {
+                    name: "Garbage",
+                    people: ["Charlie", "Bob", "Alice"],
+                    colors: ["#45B7D1", "#4ECDC4", "#FF6B6B"]  // Blue, Teal, Red
+                }
+            ],
+            defaultColor: "#4CAF50",  // Default green if no color specified
+            showLastFlip: true
+        };
+
+        // Task states storage
+        let taskStates = {};
+
+        // Render all tasks using the core logic
+        function render() {
+            const container = document.getElementById("flipper-module");
+            container.innerHTML = "";
+
+            config.tasks.forEach(task => {
+                const taskState = taskStates[task.name];
+                if (taskState) {
+                    const card = FlipperCore.createTaskCard(task, taskState, config, flipTask);
+                    container.appendChild(card);
+                }
+            });
+        }
+
+        // Flip to the next person for a task using core logic
+        function flipTask(taskName) {
+            FlipperCore.flipTask(taskName, taskStates);
+            
+            // Update only the specific task card instead of re-rendering everything
+            const container = document.getElementById("flipper-module");
+            const task = config.tasks.find(t => t.name === taskName);
+            
+            if (task && container) {
+                FlipperCore.updateTaskCard(
+                    taskName,
+                    task,
+                    taskStates[taskName],
+                    config,
+                    container,
+                    flipTask
+                );
+            }
+            
+            console.log(`Flipped ${taskName} to ${taskStates[taskName].people[taskStates[taskName].currentIndex]}`);
+        }
+
+        // Reset all tasks
+        function resetAll() {
+            if (confirm("Are you sure you want to reset all tasks?")) {
+                taskStates = FlipperCore.initializeTaskStates(config.tasks);
+                render();
+                console.log("All tasks reset");
+            }
+        }
+
+        // Save to localStorage
+        function saveToLocalStorage() {
+            localStorage.setItem("mmm-flipper-test", JSON.stringify(taskStates));
+            alert("Saved to browser storage!");
+            console.log("Saved task states:", taskStates);
+        }
+
+        // Load from localStorage
+        function loadFromLocalStorage() {
+            const saved = localStorage.getItem("mmm-flipper-test");
+            if (saved) {
+                taskStates = JSON.parse(saved);
+                render();
+                alert("Loaded from browser storage!");
+                console.log("Loaded task states:", taskStates);
+            } else {
+                alert("No saved data found in browser storage.");
+            }
+        }
+
+        // Initialize on page load
+        document.addEventListener("DOMContentLoaded", () => {
+            // Try to load from localStorage first
+            const saved = localStorage.getItem("mmm-flipper-test");
+            let savedStates = {};
+            
+            if (saved) {
+                try {
+                    savedStates = JSON.parse(saved);
+                } catch (e) {
+                    console.error("Error loading saved states:", e);
+                }
+            }
+            
+            // Initialize using core logic
+            taskStates = FlipperCore.initializeTaskStates(config.tasks, savedStates);
+            
+            render();
+            console.log("MMM-Flipper Tester loaded!");
+            console.log("Current task states:", taskStates);
+        });
+    </script>
+</body>
+</html>

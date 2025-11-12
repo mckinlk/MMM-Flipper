@@ -1,0 +1,126 @@
+/* MMM-Flipper Styles */
+
+.flipper-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+    padding: 10px;
+}
+
+.flipper-task-card {
+    background: rgba(0, 0, 0, 0.4);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    padding: 20px;
+    min-width: 200px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.flipper-task-card:hover {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-2px);
+}
+
+.flipper-task-title {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 15px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.flipper-current-person {
+    font-size: 2em;
+    font-weight: bold;
+    /* Color set dynamically via inline styles */
+    margin: 20px 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    padding: 15px 25px;
+    border-radius: 15px;
+    /* Background and border colors set dynamically via inline styles */
+    border-width: 2px;
+    border-style: solid;
+}
+
+.flipper-current-person:hover {
+    filter: brightness(1.2);
+    transform: scale(1.05);
+}
+
+.flipper-current-person:active {
+    transform: scale(0.95);
+}
+
+.flipper-button {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    border-radius: 25px;
+    padding: 12px 30px;
+    font-size: 1em;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 10px 0;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+    display: none; /* Hidden - using clickable name instead */
+}
+
+.flipper-button:hover {
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+}
+
+.flipper-button:active {
+    transform: scale(0.95);
+}
+
+.flipper-last-flip {
+    font-size: 0.7em;
+    color: #aaa;
+    margin-top: 15px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-style: italic;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    .flipper-container {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .flipper-task-card {
+        width: 90%;
+        max-width: 300px;
+    }
+}
+
+/* Dark theme adjustments */
+body.dark .flipper-task-card {
+    background: rgba(0, 0, 0, 0.6);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Light theme adjustments */
+body.light .flipper-task-card {
+    background: rgba(255, 255, 255, 0.9);
+    border-color: rgba(0, 0, 0, 0.2);
+}
+
+body.light .flipper-task-title {
+    color: #333;
+}
+
+body.light .flipper-last-flip {
+    color: #666;
+}

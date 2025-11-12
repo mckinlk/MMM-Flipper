@@ -1,0 +1,22 @@
+{
+  "name": "MMM-Flipper",
+  "version": "1.0.0",
+  "description": "A MagicMirror² module for tracking rotating task assignments",
+  "main": "MMM-Flipper.js",
+  "keywords": [
+    "magic mirror",
+    "module",
+    "task rotation",
+    "chores",
+    "task assignment"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/MMM-Flipper.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/MMM-Flipper/issues"
+  }
+}
