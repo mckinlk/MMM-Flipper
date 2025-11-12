@@ -41,12 +41,9 @@ Module.register("MMM-Flipper", {
         
         // Load core logic
         this.loadFlipperCore();
-        
-        // Initialize task states
-        this.taskStates = this.FlipperCore.initializeTaskStates(this.config.tasks, {});
-        
-        // Request saved states from node_helper
-        this.sendSocketNotification("GET_TASK_STATES", {});
+        // Note: initialization of taskStates and requesting saved states
+        // happens after the FlipperCore script has been loaded in
+        // loadFlipperCore() to avoid calling methods on an undefined object.
     },
 
     // Load the core flipper logic
@@ -61,6 +58,17 @@ Module.register("MMM-Flipper", {
             if (typeof FlipperCore !== 'undefined') {
                 self.FlipperCore = FlipperCore;
                 clearInterval(checkCore);
+
+                // Initialize task states now that FlipperCore is available
+                try {
+                    self.taskStates = self.FlipperCore.initializeTaskStates(self.config.tasks, {});
+                } catch (e) {
+                    Log.error("Error initializing task states:", e);
+                    self.taskStates = {};
+                }
+
+                // Request saved states from node_helper (will merge when received)
+                self.sendSocketNotification("GET_TASK_STATES", {});
             }
         }, 100);
     },
