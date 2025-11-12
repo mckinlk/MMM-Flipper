@@ -27,7 +27,9 @@ Module.register("MMM-Flipper", {
         ],
         defaultColor: "#4CAF50",  // Default color if no color specified
         animationSpeed: 1000,
-        showLastFlip: true
+        showLastFlip: true,
+        compactMode: false,  // Use smaller cards for tight spaces
+        maxCardWidth: "auto"  // Override max card width (e.g., "120px", "auto")
     },
 
     // Store task states
@@ -84,6 +86,16 @@ Module.register("MMM-Flipper", {
         var wrapper = document.createElement("div");
         wrapper.className = "flipper-container";
         wrapper.id = "flipper-container-" + this.identifier;
+
+        // Apply compact mode if enabled
+        if (this.config.compactMode) {
+            wrapper.classList.add("compact-mode");
+        }
+
+        // Apply custom max width if specified
+        if (this.config.maxCardWidth && this.config.maxCardWidth !== "auto") {
+            wrapper.style.setProperty("--max-card-width", this.config.maxCardWidth);
+        }
 
         if (this.config.tasks.length === 0) {
             wrapper.innerHTML = "No tasks configured.";

@@ -3,106 +3,159 @@
 .flipper-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 6px;
     justify-content: center;
-    padding: 5px;
+    padding: 0;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .flipper-task-card {
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 8px;
-    padding: 12px;
-    min-width: 140px;
+    border-radius: 6px;
+    padding: 8px 10px;
+    min-width: 100px;
+    max-width: 180px;
+    flex: 1;
     text-align: center;
     transition: all 0.3s ease;
+    box-sizing: border-box;
 }
 
 .flipper-task-card:hover {
     background: rgba(0, 0, 0, 0.6);
     border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-1px);
 }
 
 .flipper-task-title {
-    font-size: 0.9em;
+    font-size: 0.8em;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    line-height: 1.2;
 }
 
 .flipper-current-person {
-    font-size: 1.4em;
+    font-size: 1.1em;
     font-weight: bold;
     /* Color set dynamically via inline styles */
-    margin: 10px 0;
+    margin: 6px 0;
     cursor: pointer;
     transition: all 0.3s ease;
-    padding: 8px 16px;
-    border-radius: 10px;
+    padding: 6px 12px;
+    border-radius: 8px;
     /* Background and border colors set dynamically via inline styles */
-    border-width: 2px;
+    border-width: 1px;
     border-style: solid;
+    line-height: 1.3;
 }
 
 .flipper-current-person:hover {
-    filter: brightness(1.2);
-    transform: scale(1.05);
+    filter: brightness(1.1);
+    transform: scale(1.02);
 }
 
 .flipper-current-person:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
 }
 
 .flipper-button {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    border-radius: 25px;
-    padding: 12px 30px;
-    font-size: 1em;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 10px 0;
-    transition: all 0.3s ease;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
     display: none; /* Hidden - using clickable name instead */
 }
 
-.flipper-button:hover {
-    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-}
-
-.flipper-button:active {
-    transform: scale(0.95);
-}
-
 .flipper-last-flip {
-    font-size: 0.6em;
+    font-size: 0.55em;
     color: #aaa;
-    margin-top: 8px;
-    padding-top: 6px;
+    margin-top: 6px;
+    padding-top: 4px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-style: italic;
+    line-height: 1.2;
 }
 
-/* Responsive design */
+/* Responsive design for different screen sizes */
 @media (max-width: 600px) {
     .flipper-container {
         flex-direction: column;
         align-items: center;
+        gap: 4px;
     }
     
     .flipper-task-card {
-        width: 90%;
-        max-width: 300px;
+        width: 100%;
+        max-width: 200px;
+        min-width: 120px;
     }
+}
+
+/* Position-specific adjustments for MagicMirror regions */
+.region.top_center .flipper-container,
+.region.bottom_center .flipper-container {
+    flex-direction: row;
+    max-width: 100%;
+}
+
+.region.top_left .flipper-container,
+.region.top_right .flipper-container,
+.region.bottom_left .flipper-container,
+.region.bottom_right .flipper-container {
+    flex-direction: column;
+    max-width: 300px;
+}
+
+.region.middle_center .flipper-container {
+    flex-direction: row;
+    justify-content: center;
+}
+
+/* Compact mode for side regions */
+.region.top_left .flipper-task-card,
+.region.top_right .flipper-task-card,
+.region.bottom_left .flipper-task-card,
+.region.bottom_right .flipper-task-card {
+    min-width: 80px;
+    max-width: 120px;
+    padding: 6px 8px;
+}
+
+.region.top_left .flipper-current-person,
+.region.top_right .flipper-current-person,
+.region.bottom_left .flipper-current-person,
+.region.bottom_right .flipper-current-person {
+    font-size: 1em;
+    padding: 4px 8px;
+}
+
+/* Compact mode for even smaller cards */
+.flipper-container.compact-mode .flipper-task-card {
+    min-width: 70px;
+    max-width: 100px;
+    padding: 4px 6px;
+}
+
+.flipper-container.compact-mode .flipper-task-title {
+    font-size: 0.7em;
+    margin-bottom: 4px;
+}
+
+.flipper-container.compact-mode .flipper-current-person {
+    font-size: 0.9em;
+    padding: 4px 6px;
+    margin: 4px 0;
+}
+
+.flipper-container.compact-mode .flipper-last-flip {
+    font-size: 0.5em;
+    margin-top: 4px;
+    padding-top: 3px;
+}
+
+/* Custom card width override */
+.flipper-container[style*="--max-card-width"] .flipper-task-card {
+    max-width: var(--max-card-width);
 }
 
 /* Dark theme adjustments */
