@@ -3,17 +3,17 @@
 .flipper-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 10px;
     justify-content: center;
-    padding: 10px;
+    padding: 5px;
 }
 
 .flipper-task-card {
     background: rgba(0, 0, 0, 0.4);
-    border: 2px solid rgba(255, 255, 255, 0.2);
-    border-radius: 10px;
-    padding: 20px;
-    min-width: 200px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 8px;
+    padding: 12px;
+    min-width: 140px;
     text-align: center;
     transition: all 0.3s ease;
 }
@@ -21,27 +21,27 @@
 .flipper-task-card:hover {
     background: rgba(0, 0, 0, 0.6);
     border-color: rgba(255, 255, 255, 0.4);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
 }
 
 .flipper-task-title {
-    font-size: 1.2em;
+    font-size: 0.9em;
     font-weight: bold;
     color: #fff;
-    margin-bottom: 15px;
+    margin-bottom: 8px;
     text-transform: uppercase;
-    letter-spacing: 1px;
+    letter-spacing: 0.5px;
 }
 
 .flipper-current-person {
-    font-size: 2em;
+    font-size: 1.4em;
     font-weight: bold;
     /* Color set dynamically via inline styles */
-    margin: 20px 0;
+    margin: 10px 0;
     cursor: pointer;
     transition: all 0.3s ease;
-    padding: 15px 25px;
-    border-radius: 15px;
+    padding: 8px 16px;
+    border-radius: 10px;
     /* Background and border colors set dynamically via inline styles */
     border-width: 2px;
     border-style: solid;
@@ -84,10 +84,10 @@
 }
 
 .flipper-last-flip {
-    font-size: 0.7em;
+    font-size: 0.6em;
     color: #aaa;
-    margin-top: 15px;
-    padding-top: 10px;
+    margin-top: 8px;
+    padding-top: 6px;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     font-style: italic;
 }
