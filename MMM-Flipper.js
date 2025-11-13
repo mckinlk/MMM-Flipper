@@ -167,12 +167,13 @@ Module.register("MMM-Flipper", {
 
     // Load custom CSS and scripts
     getStyles: function() {
-        return ["MMM-Flipper.css"];
+        return ["MMM-Flipper.css", "flip.min.css"];
     },
 
     getScripts: function() {
+        // Load flip.min.js for the flip animation effect
         // Note: flipper-core.js is loaded manually in loadFlipperCore()
         // to ensure proper timing and avoid duplicate declarations
-        return [];
+        return ["flip.min.js"];
     }
 });

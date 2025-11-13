@@ -25,6 +25,36 @@ const FlipperCore = {
         return taskStates;
     },
 
+    // Update flip display with new value
+    updateFlipDisplay: function(container, newPersonName, newPersonColor, task) {
+        const tickInstance = container._tickInstance;
+        
+        // Update color variable
+        container.style.setProperty("--flipper-color", newPersonColor);
+        
+        if (tickInstance && typeof Tick !== 'undefined') {
+            try {
+                // Pad the name based on task's longest name
+                const paddedName = FlipperCore.padName(newPersonName, task);
+                // Update the value - this will trigger the flip animation
+                tickInstance.value = paddedName;
+            } catch (e) {
+                console.error("Error updating Tick value:", e);
+                // If update fails, recreate the display
+                const tickElement = container.querySelector('.tick');
+                if (tickElement) {
+                    tickElement.textContent = newPersonName;
+                }
+            }
+        } else {
+            // Fallback: update text content directly
+            const tickElement = container.querySelector('.tick');
+            if (tickElement) {
+                tickElement.textContent = newPersonName;
+            }
+        }
+    },
+
     // Create a card for a single task
     createTaskCard: function(task, taskState, config, onFlipCallback) {
         const card = document.createElement("div");
@@ -44,22 +74,60 @@ const FlipperCore = {
             ? task.colors[currentIndex] 
             : config.defaultColor || "#4CAF50";
 
-        // Current person assigned (clickable to flip)
-        const currentPerson = document.createElement("div");
-        currentPerson.className = "flipper-current-person";
-        currentPerson.innerHTML = personName;
-        currentPerson.style.cursor = "pointer";
+        // Create flip display container
+        const flipContainer = document.createElement("div");
+        flipContainer.className = "flipper-flip-container";
+        flipContainer.setAttribute("data-task-flip", task.name);
+        flipContainer.style.cursor = "pointer";
+        flipContainer.style.setProperty("--flipper-color", personColor);
         
-        // Apply custom color
-        currentPerson.style.color = personColor;
-        currentPerson.style.borderColor = personColor + "55"; // 55 = ~33% opacity
-        currentPerson.style.backgroundColor = personColor + "1A"; // 1A = ~10% opacity
-        currentPerson.style.textShadow = `0 0 10px ${personColor}80`; // 80 = ~50% opacity
+        // Create the tick element with proper structure
+        const tickElement = document.createElement("div");
+        tickElement.className = "tick";
+        tickElement.setAttribute("data-did-init", "handleFlipperInit");
         
-        currentPerson.onclick = function() {
+        // Create the inner structure for character splitting
+        const innerDiv = document.createElement("div");
+        innerDiv.setAttribute("data-repeat", "true");
+        innerDiv.setAttribute("data-layout", "horizontal fit");
+        innerDiv.setAttribute("data-transform", "upper -> split -> delay(random, 50, 100)");
+        
+        // Create span for each character
+        const charSpan = document.createElement("span");
+        charSpan.setAttribute("data-view", "flip");
+        charSpan.setAttribute("data-transform", "ascii -> arrive -> round -> char(a-zA-Z )");
+        charSpan.className = "tick-flip";
+        
+        innerDiv.appendChild(charSpan);
+        tickElement.appendChild(innerDiv);
+        flipContainer.appendChild(tickElement);
+        
+        // Initialize Tick display
+        if (typeof Tick !== 'undefined') {
+            try {
+                setTimeout(function() {
+                    const tick = Tick.DOM.create(tickElement);
+                    // Pad name based on task's longest name
+                    const paddedName = FlipperCore.padName(personName, task);
+                    tick.value = paddedName;
+                    flipContainer._tickInstance = tick;
+                }, 10);
+            } catch (e) {
+                console.error("Error creating Tick instance:", e);
+                // Fallback to simple text
+                tickElement.textContent = personName;
+            }
+        } else {
+            // Fallback if Tick not loaded
+            tickElement.textContent = personName;
+        }
+        
+        // Add click handler
+        flipContainer.onclick = function() {
             onFlipCallback(task.name);
         };
-        card.appendChild(currentPerson);
+        
+        card.appendChild(flipContainer);
 
         // Last flip info
         if (config.showLastFlip && taskState.lastFlipTime) {
@@ -74,6 +142,26 @@ const FlipperCore = {
 
         return card;
     },
+    
+    // Pad name for consistent display based on task's longest name
+    padName: function(name, task) {
+        // Find the longest name in this task's people list
+        let maxLength = name.length;
+        if (task && task.people) {
+            for (let i = 0; i < task.people.length; i++) {
+                if (task.people[i].length > maxLength) {
+                    maxLength = task.people[i].length;
+                }
+            }
+        }
+        
+        // Pad the name to match the longest name in the task
+        if (name.length < maxLength) {
+            const padding = Math.floor((maxLength - name.length) / 2);
+            return ' '.repeat(padding) + name + ' '.repeat(maxLength - name.length - padding);
+        }
+        return name;
+    },
 
     // Update only a specific task card
     updateTaskCard: function(taskName, task, taskState, config, containerElement, onFlipCallback) {
@@ -81,11 +169,42 @@ const FlipperCore = {
         const existingCard = containerElement.querySelector(`[data-task-name="${taskName}"]`);
         if (!existingCard) return;
 
-        // Create new card
-        const newCard = FlipperCore.createTaskCard(task, taskState, config, onFlipCallback);
+        // Find the flip container within the card
+        const flipContainer = existingCard.querySelector(`[data-task-flip="${taskName}"]`);
         
-        // Replace the old card with the new one
-        existingCard.replaceWith(newCard);
+        if (flipContainer) {
+            // Get new person and color
+            const currentIndex = taskState.currentIndex;
+            const personName = taskState.people[currentIndex];
+            const personColor = task.colors && task.colors[currentIndex] 
+                ? task.colors[currentIndex] 
+                : config.defaultColor || "#4CAF50";
+
+            // Update the flip display with task parameter for proper padding
+            FlipperCore.updateFlipDisplay(flipContainer, personName, personColor, task);
+        } else {
+            // If no flip container found, recreate the whole card
+            const newCard = FlipperCore.createTaskCard(task, taskState, config, onFlipCallback);
+            existingCard.replaceWith(newCard);
+        }
+
+        // Update last flip info if it exists
+        if (config.showLastFlip && taskState.lastFlipTime) {
+            let lastFlipInfo = existingCard.querySelector('.flipper-last-flip');
+            if (lastFlipInfo) {
+                const lastFlipText = "Last: " + taskState.lastPerson + " on " + 
+                    FlipperCore.formatDate(taskState.lastFlipTime);
+                lastFlipInfo.innerHTML = lastFlipText;
+            } else {
+                // Add last flip info if it doesn't exist
+                lastFlipInfo = document.createElement("div");
+                lastFlipInfo.className = "flipper-last-flip";
+                const lastFlipText = "Last: " + taskState.lastPerson + " on " + 
+                    FlipperCore.formatDate(taskState.lastFlipTime);
+                lastFlipInfo.innerHTML = lastFlipText;
+                existingCard.appendChild(lastFlipInfo);
+            }
+        }
     },
 
     // Flip to the next person for a task

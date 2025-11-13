@@ -14,10 +14,10 @@
     background: rgba(0, 0, 0, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 6px;
-    padding: 8px 10px;
-    min-width: 100px;
-    max-width: 180px;
-    flex: 1;
+    padding: 8px 6px;
+    min-width: auto;
+    max-width: none;
+    flex: 0 1 auto;
     text-align: center;
     transition: all 0.3s ease;
     box-sizing: border-box;
@@ -60,6 +60,96 @@
 
 .flipper-current-person:active {
     transform: scale(0.98);
+}
+
+.flipper-flip-container {
+    margin: 6px 0;
+    padding: 6px 12px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 35px;
+}
+
+/* Tick flip display styling */
+.flipper-flip-container .tick {
+    font-size: 1.2em;
+    white-space: nowrap;
+    font-family: "Arial Narrow", "Roboto Condensed", "PT Sans Narrow", "Franklin Gothic Medium", "Helvetica Neue Condensed", "Impact", sans-serif-condensed, arial, sans-serif;
+    font-stretch: condensed;
+    letter-spacing: -0.05em;
+}
+
+.flipper-flip-container .tick-credits {
+    display: none !important;
+}
+
+.flipper-flip-container .tick-flip {
+    font-size: 1em;
+    border-radius: 0.12em !important;
+    width: 0.7em !important;
+    min-width: 0.7em !important;
+    max-width: 0.7em !important;
+    margin: 0 0.02em !important;
+    text-align: center;
+    overflow: hidden;
+}
+
+.flipper-flip-container .tick-flip-panel {
+    background-color: var(--flipper-color, #3c3e3c) !important;
+    color: #fff !important;
+    border-radius: 0.12em !important;
+}
+
+.flipper-flip-container .tick-flip-panel-text-wrapper {
+    line-height: 1.45 !important;
+    font-stretch: condensed;
+    font-weight: bold;
+    transform: scaleX(0.65);
+}
+
+.flipper-flip-container .tick-flip-panel-front,
+.flipper-flip-container .tick-flip-panel-back {
+    background-color: var(--flipper-color, #3c3e3c) !important;
+}
+
+.flipper-flip-container .tick-flip-panel-front-text,
+.flipper-flip-container .tick-flip-panel-back-text {
+    color: #fff !important;
+    background-color: var(--flipper-color, #3c3e3c) !important;
+    left: -3px;
+    text-shadow: 
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
+.flipper-flip-container .tick-flip-spacer,
+.flipper-flip-container .tick-flip-panel-text-wrapper {
+    color: #fff !important;
+    font-stretch: condensed;
+    text-shadow: 
+        -1px -1px 0 #000,
+        1px -1px 0 #000,
+        -1px 1px 0 #000,
+        1px 1px 0 #000;
+}
+
+.flipper-flip-container .tick-char {
+    width: 0.7em;
+}
+
+.flipper-flip-container .tick-text-inline {
+    display: inline-block;
+    text-align: center;
+    min-width: 0.6em;
+    color: #fff !important;
+}
+
+.flipper-flip-container .tick-text-inline + .tick-text-inline {
+    margin-left: -0.2em;
 }
 
 .flipper-button {
